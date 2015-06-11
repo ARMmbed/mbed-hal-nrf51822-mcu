@@ -1,0 +1,42 @@
+{
+  "name": "mbed-hal-nrf51822-mcu",
+  "version": "0.0.1",
+  "description": "mbed HAL for Nordic nRF51822 MCUs",
+  "private": true,
+  "keywords": [
+    "mbed",
+    "hal",
+    "nrf51822",
+    "nordic"
+  ],
+  "author": "austin.blackstone@arm.com",
+  "repository": {
+    "url": "https://github.com/ARMmbed/mbed-hal-nrf51822-mcu.git",
+    "type": "git"
+  },
+  "homepage": "https://github.com/ARMmbed/mbed-hal-nrf51822-mcu",
+  "licenses": [
+    {
+      "url": "https://spdx.org/licenses/Apache-2.0",
+      "type": "Apache-2.0"
+    }
+  ],
+  "extraIncludes": [
+    "mbed-hal-nrf51822-mcu"
+  ],
+  "dependencies": {
+    "mbed-hal-nordic": "*",
+    "cmsis-core":"*"
+  },
+  "targetDependencies": {
+    "bbcmicro": {
+      "mbed-hal-bbcmicro": "~0.0.1"
+    },
+    "seeedtinyble":{
+      "mbed-hal-seeedtinyble":"~0.0.1"
+    },
+    "mkit":{
+      "mbed-hal-mkit":"~0.0.1"
+    }
+  }
+}
