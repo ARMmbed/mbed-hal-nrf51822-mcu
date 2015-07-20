@@ -22,11 +22,7 @@ if(${CMAKE_C_COMPILER_ID} STREQUAL GNU)
     set(STARTUP_ASM "bootstrap_gcc/startup_NRF51822.S")
     set(STARTUP_SRC "")
 elseif(${CMAKE_C_COMPILER_ID} STREQUAL ARMCC)
-    if (${TARGET_NORDIC_NRF51822_16K_ARMCC_TOOLCHAIN_INCLUDED})
-        set(STARTUP_ASM "bootstrap_armcc/16K/startup_nRF51822.S")
-    elseif(${TARGET_NORDIC_NRF51822_32K_ARMCC_TOOLCHAIN_INCLUDED})
-        set(STARTUP_ASM "bootstrap_armcc/32K/startup_nRF51822.S")
-    endif()
+    set(STARTUP_ASM "bootstrap_armcc/startup_nRF51822.S")
     set(STARTUP_SRC "bootstrap_armcc/sys.cpp")
 
     # unfortunately, for armlink we have to pass the executable startup code as
