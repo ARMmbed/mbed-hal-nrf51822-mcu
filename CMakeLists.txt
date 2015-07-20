@@ -28,13 +28,13 @@ elseif(${CMAKE_C_COMPILER_ID} STREQUAL ARMCC)
     # unfortunately, for armlink we have to pass the executable startup code as
     # an object file, not as part of an archive.
     #
-    add_library(startupcod_thefishofdoom OBJECT ${STARTUP_ASM})
+    add_library(mbed-hal-nrf51822-startupcod OBJECT ${STARTUP_ASM})
 
     # This is the "neatest" way of making sure the startup code gets linked
     # into every executable. Needless to say this is, despite its brevity,
     # not neat.
     macro (add_executable _name)
-        _add_executable(${ARGV} $<TARGET_OBJECTS:startupcod_thefishofdoom>)
+        _add_executable(${ARGV} $<TARGET_OBJECTS:mbed-hal-nrf51822-startupcod>)
     Endmacro()
 else()
     set(STARTUP_ASM "")
