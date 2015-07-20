@@ -19,7 +19,7 @@
 
 
 if(${CMAKE_C_COMPILER_ID} STREQUAL GNU)
-    set(STARTUP_ASM "bootstrap_gcc/startup_MK64F12.S")
+    set(STARTUP_ASM "bootstrap_gcc/startup_NRF51822.S")
     set(STARTUP_SRC "")
 elseif(${CMAKE_C_COMPILER_ID} STREQUAL ARMCC)
     if (${TARGET_NORDIC_NRF51822_16K_ARMCC_TOOLCHAIN_INCLUDED})
