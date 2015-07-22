@@ -54,7 +54,7 @@
 static bool              us_ticker_inited = false;
 static volatile bool     us_ticker_callbackPending = false;
 static uint32_t          us_ticker_callbackTimestamp;
-volatile uint32_t overflowCount;                   /**< The number of times the 24-bit RTC counter has overflowed. */
+volatile uint32_t        overflowCount;                   /**< The number of times the 24-bit RTC counter has overflowed. */
 
 static inline void rtc1_enableCompareInterrupt(void)
 {
