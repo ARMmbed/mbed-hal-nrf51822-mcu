@@ -1,5 +1,5 @@
 /* mbed Microcontroller Library
- * Copyright (c) 2006-2013 ARM Limited
+ * Copyright (c) 2006-2015 ARM Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,16 @@
 #include "cmsis.h"
 #include "mbed_interface.h"
 
-void sleep(void)
+void mbed_enter_sleep(sleep_t *obj)
 {
+    (void)obj;
     // ensure debug is disconnected if semihost is enabled....
     NRF_POWER->TASKS_LOWPWR = 1;
     // wait for interrupt
-    __WFE();
+    __WFI();
 }
 
-void deepsleep(void)
+void mbed_exit_sleep(sleep_t *obj)
 {
-    sleep();
-    //   NRF_POWER->SYSTEMOFF=1;
+    (void)obj;
 }

@@ -26,7 +26,6 @@ void lp_ticker_init(void)
     us_ticker_init();
 }
 
-
 uint32_t lp_ticker_read(void)
 {
     return rtc1_getCounter();
@@ -48,4 +47,12 @@ uint32_t lp_ticker_get_overflows_counter(void)
 uint32_t lp_ticker_get_compare_match(void)
 {
     return NRF_RTC1->CC[1];
+}
+
+void lp_ticker_sleep_until(uint32_t now, uint32_t time)
+{
+    lp_ticker_set_interrupt(now, time);
+    sleep_t sleep_obj;
+    mbed_enter_sleep(&sleep_obj);
+    mbed_exit_sleep(&sleep_obj);
 }
