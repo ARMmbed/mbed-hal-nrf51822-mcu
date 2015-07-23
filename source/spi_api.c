@@ -116,7 +116,7 @@ void spi_init(spi_t *obj, PinName mosi, PinName miso, PinName sclk, PinName ssel
         obj->spis->RXDPTR          = (uint32_t)&m_rx_buf[0];
         obj->spis->SHORTS          = (SPIS_SHORTS_END_ACQUIRE_Enabled << SPIS_SHORTS_END_ACQUIRE_Pos);
 
-        spi_format(obj, 8, 0, 1);  // 8 bits, mode 0, slave
+        spi_format(obj, 8, 0, SPI_MSB, 1);  // 8 bits, mode 0, slave
     } else { //master
         obj->spi->POWER = 0;
         obj->spi->POWER = 1;
@@ -147,7 +147,7 @@ void spi_init(spi_t *obj, PinName mosi, PinName miso, PinName sclk, PinName ssel
 
         obj->spi->EVENTS_READY = 0U;
 
-        spi_format(obj, 8, 0, 0);  // 8 bits, mode 0, master
+        spi_format(obj, 8, 0, SPI_MSB, 0);  // 8 bits, mode 0, master
         spi_frequency(obj, 1000000);
     }
 }
@@ -174,7 +174,7 @@ static inline void spi_enable(spi_t *obj, int slave)
     }
 }
 
-void spi_format(spi_t *obj, int bits, int mode, int slave)
+void spi_format(spi_t *obj, int bits, int mode, spi_bitorder_t order, int slave)
 {
     uint32_t config_mode = 0;
     spi_disable(obj, slave);
@@ -200,11 +200,11 @@ void spi_format(spi_t *obj, int bits, int mode, int slave)
             error("SPI format error");
             break;
     }
-    //default to msb first
+
     if (slave) {
-        obj->spis->CONFIG = (config_mode | (SPI_CONFIG_ORDER_MsbFirst << SPI_CONFIG_ORDER_Pos));
+        obj->spis->CONFIG = (config_mode | (((order == SPI_MSB) ? SPI_CONFIG_ORDER_MsbFirst : SPI_CONFIG_ORDER_LsbFirst) << SPI_CONFIG_ORDER_Pos));
     } else {
-        obj->spi->CONFIG = (config_mode | (SPI_CONFIG_ORDER_MsbFirst << SPI_CONFIG_ORDER_Pos));
+        obj->spi->CONFIG = (config_mode | (((order == SPI_MSB) ? SPI_CONFIG_ORDER_MsbFirst : SPI_CONFIG_ORDER_LsbFirst) << SPI_CONFIG_ORDER_Pos));
     }
 
     spi_enable(obj, slave);
