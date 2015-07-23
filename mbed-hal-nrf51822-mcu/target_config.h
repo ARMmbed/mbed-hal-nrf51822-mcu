@@ -1,5 +1,5 @@
 /* mbed Microcontroller Library
- * Copyright (c) 2006-2015 ARM Limited
+ * Copyright (c) 2015 ARM Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "sleep_api.h"
-#include "cmsis.h"
-#include "mbed_interface.h"
+#ifndef MBED_TARGET_CONFIG_H
+#define MBED_TARGET_CONFIG_H
 
-void mbed_enter_sleep(sleep_t *obj)
-{
-    (void)obj;
-    // ensure debug is disconnected if semihost is enabled....
-    NRF_POWER->TASKS_LOWPWR = 1;
-    // wait for interrupt
-    __WFI();
-}
+// Minar platform configuration
 
-void mbed_exit_sleep(sleep_t *obj)
-{
-    (void)obj;
-}
+#define MINAR_PLATFORM_TIME_BASE 32768
+#define MINAR_PLATFORM_MINIMUM_SLEEP 10
+
+#endif

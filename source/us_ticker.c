@@ -52,9 +52,9 @@
 #define MICROSECONDS_TO_RTC_UNITS(MICROS)    ((((uint64_t)(MICROS) * RTC_CLOCK_FREQ) + 999999) / 1000000)
 
 static bool              us_ticker_inited = false;
-static volatile uint32_t overflowCount;                   /**< The number of times the 24-bit RTC counter has overflowed. */
 static volatile bool     us_ticker_callbackPending = false;
 static uint32_t          us_ticker_callbackTimestamp;
+volatile uint32_t        overflowCount;                   /**< The number of times the 24-bit RTC counter has overflowed. */
 
 static inline void rtc1_enableCompareInterrupt(void)
 {
@@ -142,7 +142,7 @@ static inline uint64_t rtc1_getCounter64(void)
  *
  * @return Current RTC1 counter as a 32-bit value (even though the underlying counter is 24-bit)
  */
-static inline uint32_t rtc1_getCounter(void)
+uint32_t rtc1_getCounter(void)
 {
     return rtc1_getCounter64();
 }
@@ -163,6 +163,11 @@ void RTC1_IRQHandler(void)
         NRF_RTC1->EVENTS_COMPARE[0] = 0;
         NRF_RTC1->EVTENCLR          = RTC_EVTEN_COMPARE0_Msk;
         invokeCallback();
+    }
+    if (NRF_RTC1->EVENTS_COMPARE[1]) {
+        // Compare[1] used by lp ticker
+        NRF_RTC1->EVENTS_COMPARE[1] = 0;
+        NRF_RTC1->EVTENCLR = RTC_EVTEN_COMPARE1_Msk;
     }
 }
 
