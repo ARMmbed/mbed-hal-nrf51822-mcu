@@ -1,6 +1,6 @@
 {
   "name": "mbed-hal-nrf51822-mcu",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "mbed HAL for Nordic nRF51822 MCUs",
   "private": true,
   "keywords": [
@@ -26,17 +26,17 @@
   ],
   "dependencies": {
     "mbed-hal-nordic": "*",
-    "cmsis-core":"*"
+    "cmsis-core": "*"
   },
   "targetDependencies": {
     "bbcmicro": {
       "mbed-hal-bbcmicro": "~0.0.1"
     },
-    "seeedtinyble":{
-      "mbed-hal-seeedtinyble":"~0.0.1"
+    "seeedtinyble": {
+      "mbed-hal-seeedtinyble": "~0.0.1"
     },
-    "mkit":{
-      "mbed-hal-mkit":"~0.0.1"
+    "mkit": {
+      "mbed-hal-mkit": "~0.0.1"
     }
   }
 }
