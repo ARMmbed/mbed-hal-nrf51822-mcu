@@ -78,6 +78,9 @@ struct gpio_irq_s {
     uint32_t ch;
 };
 
+struct sleep_s {
+};
+
 #include "gpio_object.h"
 
 #ifdef __cplusplus
