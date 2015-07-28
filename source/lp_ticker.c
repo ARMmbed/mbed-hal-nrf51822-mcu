@@ -15,10 +15,11 @@
  */
 
 // The lp ticker is using RTC which is shared with us ticker
+#include "us_ticker_api.h"
+#include "lp_ticker_api.h"
+#include "sleep_api.h"
 
-#include "us_ticker.h"
-
-extern rtc1_getCounter(void);
+extern uint32_t rtc1_getCounter(void);
 extern volatile uint32_t overflowCount;
 
 void lp_ticker_init(void)
