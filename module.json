@@ -29,7 +29,8 @@
   ],
   "dependencies": {
     "mbed-hal-nordic": "*",
-    "cmsis-core": "*"
+    "cmsis-core": "*",
+    "ble-nrf51822": "*"
   },
   "targetDependencies": {
     "bbcmicro": {
