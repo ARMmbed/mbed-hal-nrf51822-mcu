@@ -16,14 +16,18 @@
 #include "sleep_api.h"
 #include "cmsis.h"
 #include "mbed_interface.h"
+#include "nrf_soc.h"
 
 void mbed_enter_sleep(sleep_t *obj)
 {
     (void)obj;
+
     // ensure debug is disconnected if semihost is enabled....
     NRF_POWER->TASKS_LOWPWR = 1;
-    // wait for interrupt
-    __WFI();
+
+    SCB->SCR |= SCB_SCR_SEVONPEND_Msk; /* send an event when an interrupt is pending.
+                                        * This helps with the wakeup from the following app_evt_wait(). */
+    sd_app_evt_wait();
 }
 
 void mbed_exit_sleep(sleep_t *obj)

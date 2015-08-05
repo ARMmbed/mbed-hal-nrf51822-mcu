@@ -19,7 +19,7 @@
 
 
 if(${CMAKE_C_COMPILER_ID} STREQUAL GNU)
-    set(STARTUP_ASM "bootstrap_gcc/startup_NRF51822.S")
+    set(STARTUP_ASM "bootstrap_gcc/startup_nRF51822.S")
     set(STARTUP_SRC "")
 elseif(${CMAKE_C_COMPILER_ID} STREQUAL ARMCC)
     set(STARTUP_ASM "bootstrap_armcc/startup_nRF51822.S")
