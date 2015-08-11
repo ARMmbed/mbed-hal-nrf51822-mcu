@@ -41,6 +41,9 @@
     },
     "mkit": {
       "mbed-hal-mkit": "~0.0.1"
+    },
+    "nrf51dk": {
+      "mbed-hal-nrf51dk" : "~0.0.1"
     }
   }
 }
