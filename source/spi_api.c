@@ -30,18 +30,18 @@ volatile uint8_t m_rx_buf[SPIS_MESSAGE_SIZE] = {0};
 extern volatile i2c_spi_peripheral_t i2c0_spi0_peripheral; // from i2c_api.c
 extern volatile i2c_spi_peripheral_t i2c1_spi1_peripheral;
 
-void spi_init(spi_t *obj, PinName mosi, PinName miso, PinName sclk, PinName ssel)
+void spi_init(spi_t *obj, PinName mosi, PinName miso, PinName sclk)
 {
     SPIName spi;
-    
-    if (ssel == NC && i2c0_spi0_peripheral.usage == I2C_SPI_PERIPHERAL_FOR_SPI &&
+
+    if (i2c0_spi0_peripheral.usage == I2C_SPI_PERIPHERAL_FOR_SPI &&
             i2c0_spi0_peripheral.sda_mosi == (uint8_t)mosi &&
             i2c0_spi0_peripheral.scl_miso == (uint8_t)miso &&
             i2c0_spi0_peripheral.sclk     == (uint8_t)sclk) {
         // The SPI with the same pins is already initialized
         spi = SPI_0;
         obj->peripheral = 0x1;
-    } else if (ssel == NC && i2c1_spi1_peripheral.usage == I2C_SPI_PERIPHERAL_FOR_SPI &&
+    } else if (i2c1_spi1_peripheral.usage == I2C_SPI_PERIPHERAL_FOR_SPI &&
             i2c1_spi1_peripheral.sda_mosi == (uint8_t)mosi &&
             i2c1_spi1_peripheral.scl_miso == (uint8_t)miso &&
             i2c1_spi1_peripheral.sclk     == (uint8_t)sclk) {
@@ -53,7 +53,7 @@ void spi_init(spi_t *obj, PinName mosi, PinName miso, PinName sclk, PinName ssel
         i2c1_spi1_peripheral.sda_mosi = (uint8_t)mosi;
         i2c1_spi1_peripheral.scl_miso = (uint8_t)miso;
         i2c1_spi1_peripheral.sclk     = (uint8_t)sclk;
-        
+
         spi = SPI_1;
         obj->peripheral = 0x2;
     } else if (i2c0_spi0_peripheral.usage == 0) {
@@ -61,7 +61,7 @@ void spi_init(spi_t *obj, PinName mosi, PinName miso, PinName sclk, PinName ssel
         i2c0_spi0_peripheral.sda_mosi = (uint8_t)mosi;
         i2c0_spi0_peripheral.scl_miso = (uint8_t)miso;
         i2c0_spi0_peripheral.sclk     = (uint8_t)sclk;
-        
+
         spi = SPI_0;
         obj->peripheral = 0x1;
     } else {
@@ -69,115 +69,61 @@ void spi_init(spi_t *obj, PinName mosi, PinName miso, PinName sclk, PinName ssel
         error("No available SPI");
     }
 
-    if (ssel==NC) {
-        obj->spi  = (NRF_SPI_Type *)spi;
-        obj->spis = (NRF_SPIS_Type *)NC;
-    } else {
-        obj->spi  = (NRF_SPI_Type *)NC;
-        obj->spis = (NRF_SPIS_Type *)spi;
-    }
+    obj->spi  = (NRF_SPI_Type *)spi;
+    obj->spis = (NRF_SPIS_Type *)NC;
 
-    // pin out the spi pins
-    if (ssel != NC) { //slave
-        obj->spis->POWER = 0;
-        obj->spis->POWER = 1;
+    //master
+    obj->spi->POWER = 0;
+    obj->spi->POWER = 1;
 
-        NRF_GPIO->PIN_CNF[mosi] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
-                                    | (GPIO_PIN_CNF_DRIVE_S0S1 << GPIO_PIN_CNF_DRIVE_Pos)
-                                    | (GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos)
-                                    | (GPIO_PIN_CNF_INPUT_Connect << GPIO_PIN_CNF_INPUT_Pos)
-                                    | (GPIO_PIN_CNF_DIR_Input << GPIO_PIN_CNF_DIR_Pos);
-        NRF_GPIO->PIN_CNF[miso] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
-                                    | (GPIO_PIN_CNF_DRIVE_S0S1 << GPIO_PIN_CNF_DRIVE_Pos)
-                                    | (GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos)
-                                    | (GPIO_PIN_CNF_INPUT_Connect << GPIO_PIN_CNF_INPUT_Pos)
-                                    | (GPIO_PIN_CNF_DIR_Input << GPIO_PIN_CNF_DIR_Pos);
-        NRF_GPIO->PIN_CNF[sclk] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
-                                    | (GPIO_PIN_CNF_DRIVE_S0S1 << GPIO_PIN_CNF_DRIVE_Pos)
-                                    | (GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos)
-                                    | (GPIO_PIN_CNF_INPUT_Connect << GPIO_PIN_CNF_INPUT_Pos)
-                                    | (GPIO_PIN_CNF_DIR_Input << GPIO_PIN_CNF_DIR_Pos);
-        NRF_GPIO->PIN_CNF[ssel] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
-                                    | (GPIO_PIN_CNF_DRIVE_S0S1 << GPIO_PIN_CNF_DRIVE_Pos)
-                                    | (GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos)
-                                    | (GPIO_PIN_CNF_INPUT_Connect << GPIO_PIN_CNF_INPUT_Pos)
-                                    | (GPIO_PIN_CNF_DIR_Input << GPIO_PIN_CNF_DIR_Pos);
+    //NRF_GPIO->DIR |= (1<<mosi);
+    NRF_GPIO->PIN_CNF[mosi] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
+                                | (GPIO_PIN_CNF_DRIVE_S0S1 << GPIO_PIN_CNF_DRIVE_Pos)
+                                | (GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos)
+                                | (GPIO_PIN_CNF_INPUT_Connect << GPIO_PIN_CNF_INPUT_Pos)
+                                | (GPIO_PIN_CNF_DIR_Output << GPIO_PIN_CNF_DIR_Pos);
+    obj->spi->PSELMOSI = mosi;
 
-        obj->spis->PSELMOSI = mosi;
-        obj->spis->PSELMISO = miso;
-        obj->spis->PSELSCK  = sclk;
-        obj->spis->PSELCSN  = ssel;
+    NRF_GPIO->PIN_CNF[sclk] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
+                                | (GPIO_PIN_CNF_DRIVE_S0S1 << GPIO_PIN_CNF_DRIVE_Pos)
+                                | (GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos)
+                                | (GPIO_PIN_CNF_INPUT_Connect << GPIO_PIN_CNF_INPUT_Pos)
+                                | (GPIO_PIN_CNF_DIR_Output << GPIO_PIN_CNF_DIR_Pos);
+    obj->spi->PSELSCK = sclk;
 
-        obj->spis->EVENTS_END      = 0;
-        obj->spis->EVENTS_ACQUIRED = 0;
-        obj->spis->MAXRX           = SPIS_MESSAGE_SIZE;
-        obj->spis->MAXTX           = SPIS_MESSAGE_SIZE;
-        obj->spis->TXDPTR          = (uint32_t)&m_tx_buf[0];
-        obj->spis->RXDPTR          = (uint32_t)&m_rx_buf[0];
-        obj->spis->SHORTS          = (SPIS_SHORTS_END_ACQUIRE_Enabled << SPIS_SHORTS_END_ACQUIRE_Pos);
+    //NRF_GPIO->DIR &= ~(1<<miso);
+    NRF_GPIO->PIN_CNF[miso] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
+                                | (GPIO_PIN_CNF_DRIVE_S0S1 << GPIO_PIN_CNF_DRIVE_Pos)
+                                | (GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos)
+                                | (GPIO_PIN_CNF_INPUT_Connect << GPIO_PIN_CNF_INPUT_Pos)
+                                | (GPIO_PIN_CNF_DIR_Input << GPIO_PIN_CNF_DIR_Pos);
 
-        spi_format(obj, 8, 0, SPI_MSB, 1);  // 8 bits, mode 0, slave
-    } else { //master
-        obj->spi->POWER = 0;
-        obj->spi->POWER = 1;
+    obj->spi->PSELMISO = miso;
 
-        //NRF_GPIO->DIR |= (1<<mosi);
-        NRF_GPIO->PIN_CNF[mosi] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
-                                    | (GPIO_PIN_CNF_DRIVE_S0S1 << GPIO_PIN_CNF_DRIVE_Pos)
-                                    | (GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos)
-                                    | (GPIO_PIN_CNF_INPUT_Connect << GPIO_PIN_CNF_INPUT_Pos)
-                                    | (GPIO_PIN_CNF_DIR_Output << GPIO_PIN_CNF_DIR_Pos);
-        obj->spi->PSELMOSI = mosi;
+    obj->spi->EVENTS_READY = 0U;
 
-        NRF_GPIO->PIN_CNF[sclk] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
-                                    | (GPIO_PIN_CNF_DRIVE_S0S1 << GPIO_PIN_CNF_DRIVE_Pos)
-                                    | (GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos)
-                                    | (GPIO_PIN_CNF_INPUT_Connect << GPIO_PIN_CNF_INPUT_Pos)
-                                    | (GPIO_PIN_CNF_DIR_Output << GPIO_PIN_CNF_DIR_Pos);
-        obj->spi->PSELSCK = sclk;
-
-        //NRF_GPIO->DIR &= ~(1<<miso);
-        NRF_GPIO->PIN_CNF[miso] = (GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos)
-                                    | (GPIO_PIN_CNF_DRIVE_S0S1 << GPIO_PIN_CNF_DRIVE_Pos)
-                                    | (GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos)
-                                    | (GPIO_PIN_CNF_INPUT_Connect << GPIO_PIN_CNF_INPUT_Pos)
-                                    | (GPIO_PIN_CNF_DIR_Input << GPIO_PIN_CNF_DIR_Pos);
-
-        obj->spi->PSELMISO = miso;
-
-        obj->spi->EVENTS_READY = 0U;
-
-        spi_format(obj, 8, 0, SPI_MSB, 0);  // 8 bits, mode 0, master
-        spi_frequency(obj, 1000000);
-    }
+    spi_format(obj, 8, 0, SPI_MSB);  // 8 bits, mode 0, master
+    spi_frequency(obj, 1000000);
 }
 
 void spi_free(spi_t *obj)
 {
 }
 
-static inline void spi_disable(spi_t *obj, int slave)
+static inline void spi_disable(spi_t *obj)
 {
-    if (slave) {
-        obj->spis->ENABLE = (SPIS_ENABLE_ENABLE_Disabled << SPIS_ENABLE_ENABLE_Pos);
-    } else {
-        obj->spi->ENABLE = (SPI_ENABLE_ENABLE_Disabled << SPI_ENABLE_ENABLE_Pos);
-    }
+    obj->spi->ENABLE = (SPI_ENABLE_ENABLE_Disabled << SPI_ENABLE_ENABLE_Pos);
 }
 
-static inline void spi_enable(spi_t *obj, int slave)
+static inline void spi_enable(spi_t *obj)
 {
-    if (slave) {
-        obj->spis->ENABLE = (SPIS_ENABLE_ENABLE_Enabled << SPIS_ENABLE_ENABLE_Pos);
-    } else {
-        obj->spi->ENABLE = (SPI_ENABLE_ENABLE_Enabled << SPI_ENABLE_ENABLE_Pos);
-    }
+    obj->spi->ENABLE = (SPI_ENABLE_ENABLE_Enabled << SPI_ENABLE_ENABLE_Pos);
 }
 
-void spi_format(spi_t *obj, int bits, int mode, spi_bitorder_t order, int slave)
+void spi_format(spi_t *obj, int bits, int mode, spi_bitorder_t order)
 {
     uint32_t config_mode = 0;
-    spi_disable(obj, slave);
+    spi_disable(obj);
 
     if (bits != 8) {
         error("Only 8bits SPI supported");
@@ -201,13 +147,9 @@ void spi_format(spi_t *obj, int bits, int mode, spi_bitorder_t order, int slave)
             break;
     }
 
-    if (slave) {
-        obj->spis->CONFIG = (config_mode | (((order == SPI_MSB) ? SPI_CONFIG_ORDER_MsbFirst : SPI_CONFIG_ORDER_LsbFirst) << SPI_CONFIG_ORDER_Pos));
-    } else {
-        obj->spi->CONFIG = (config_mode | (((order == SPI_MSB) ? SPI_CONFIG_ORDER_MsbFirst : SPI_CONFIG_ORDER_LsbFirst) << SPI_CONFIG_ORDER_Pos));
-    }
+    obj->spi->CONFIG = (config_mode | (((order == SPI_MSB) ? SPI_CONFIG_ORDER_MsbFirst : SPI_CONFIG_ORDER_LsbFirst) << SPI_CONFIG_ORDER_Pos));
 
-    spi_enable(obj, slave);
+    spi_enable(obj);
 }
 
 void spi_frequency(spi_t *obj, int hz)
@@ -215,7 +157,7 @@ void spi_frequency(spi_t *obj, int hz)
     if ((int)obj->spi==NC) {
         return;
     }
-    spi_disable(obj, 0);
+    spi_disable(obj);
 
     if (hz<250000) { //125Kbps
         obj->spi->FREQUENCY = (uint32_t) SPI_FREQUENCY_FREQUENCY_K125;
@@ -233,7 +175,7 @@ void spi_frequency(spi_t *obj, int hz)
         obj->spi->FREQUENCY = (uint32_t) SPI_FREQUENCY_FREQUENCY_M8;
     }
 
-    spi_enable(obj, 0);
+    spi_enable(obj);
 }
 
 static inline int spi_readable(spi_t *obj)
