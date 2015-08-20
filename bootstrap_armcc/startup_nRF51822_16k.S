@@ -31,12 +31,7 @@
 
 ; Description message
 
-#ifdef TARGET_MCU_NORDIC_16K
 __initial_sp	EQU     0x20004000
-#elif defined TARGET_MCU_NORDIC_32K
-__initial_sp    EQU     0x20008000
-#endif
-
 
                 PRESERVE8
                 THUMB
