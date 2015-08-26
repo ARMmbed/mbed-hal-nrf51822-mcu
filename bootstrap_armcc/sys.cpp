@@ -1,13 +1,28 @@
-/* mbed Microcontroller Library - stackheap
- * Copyright (C) 2009-2011 ARM Limited. All rights reserved.
- * 
- * Setup a fixed single stack/heap memory model, 
- *  between the top of the RW/ZI region and the stackpointer
+/*
+ * PackageLicenseDeclared: Apache-2.0
+ * Copyright (c) 2015 ARM Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * Setup a fixed single stack/heap memory model, between the top of the RW/ZI
+ * region and the stackpointer
  */
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 
 #include <rt_misc.h>
 #include <stdint.h>
@@ -28,4 +43,4 @@ extern __value_in_regs struct __initial_stackheap __user_setup_stackheap(uint32_
 
 #ifdef __cplusplus
 }
-#endif 
+#endif
