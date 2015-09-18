@@ -88,6 +88,8 @@ elseif(TARGET_LIKE_MKIT)
     set(PLATFORM_SPECIFIC_HAL_LIB mbed-hal-mkit)
 elseif(TARGET_LIKE_NRF51DK)
     set(PLATFORM_SPECIFIC_HAL_LIB mbed-hal-nrf51dk)
+else()
+    message(FATAL_ERROR "Missing PLATFORM_SPECIFIC_HAL_LIB")
 endif()
 
 target_link_libraries(mbed-hal-nrf51822-mcu
