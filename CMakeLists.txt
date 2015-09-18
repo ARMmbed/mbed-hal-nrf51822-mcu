@@ -77,8 +77,24 @@ else()
     set(EXTRA_LINK_LIBS)
 endif()
 
+# Need to setup PLATFORM_SPECIFIC_HAL_LIB which will be added as a link
+# dependency. This link dependency could have been automated by yotta, but
+# requires an extra step for now.
+if(TARGET_LIKE_BBCMICRO)
+    set(PLATFORM_SPECIFIC_HAL_LIB mbed-hal-bbcmicro)
+elseif(TARGET_LIKE_SEEEDTINYBLE)
+    set(PLATFORM_SPECIFIC_HAL_LIB mbed-hal-seeedtinyble)
+elseif(TARGET_LIKE_MKIT)
+    set(PLATFORM_SPECIFIC_HAL_LIB mbed-hal-mkit)
+elseif(TARGET_LIKE_NRF51DK)
+    set(PLATFORM_SPECIFIC_HAL_LIB mbed-hal-nrf51dk)
+else()
+    message(FATAL_ERROR "Missing PLATFORM_SPECIFIC_HAL_LIB")
+endif()
+
 target_link_libraries(mbed-hal-nrf51822-mcu
     ${EXTRA_LINK_LIBS}
     mbed-hal
     mbed-hal-nordic
+    ${PLATFORM_SPECIFIC_HAL_LIB}
 )
