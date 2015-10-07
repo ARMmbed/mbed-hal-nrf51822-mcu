@@ -44,6 +44,9 @@
     },
     "nrf51dk": {
       "mbed-hal-nrf51dk": "~0.0.1"
+    },
+    "watch-ble-nrf51": {
+      "mbed-hal-watch-ble-nrf51": "^1.0.0"
     }
   }
 }
