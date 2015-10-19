@@ -7,7 +7,8 @@
     "mbed",
     "hal",
     "nrf51822",
-    "nordic"
+    "nordic",
+    "mbed-official"
   ],
   "author": "austin.blackstone@arm.com",
   "repository": {
@@ -40,10 +41,10 @@
       "mbed-hal-seeedtinyble": "~0.0.1"
     },
     "mkit": {
-      "mbed-hal-mkit": "~0.0.1"
+      "mbed-hal-mkit": "^1.0.0"
     },
     "nrf51dk": {
-      "mbed-hal-nrf51dk": "~0.0.1"
+      "mbed-hal-nrf51dk": "^1.0.0"
     },
     "watch-ble-nrf51": {
       "mbed-hal-watch-ble-nrf51": "^1.0.0"
