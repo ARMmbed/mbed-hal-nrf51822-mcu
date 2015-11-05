@@ -43,7 +43,7 @@
       "mbed-hal-mkit": "^1.0.0"
     },
     "nrf51dk": {
-      "mbed-hal-nrf51dk": "^1.0.0"
+      "mbed-hal-nrf51dk": "^2.0.0"
     },
     "nrf51-generic": {
       "mbed-hal-nrf51-generic": "^1.0.0"
