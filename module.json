@@ -30,7 +30,7 @@
   "dependencies": {
     "mbed-hal-nordic": "^1.0.0",
     "cmsis-core": "^1.0.0",
-    "ble-nrf51822": "^2.0.0"
+    "ble-nrf51822": "^1.0.0"
   },
   "targetDependencies": {
     "bbcmicro": {
