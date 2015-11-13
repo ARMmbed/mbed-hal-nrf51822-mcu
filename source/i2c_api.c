@@ -13,11 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "mbed_assert.h"
+#ifdef YOTTA_CFG_MBED_OS
+    #include "mbed-drivers/mbed_assert.h"
+    #include "mbed-drivers/mbed_error.h"
+#else
+    #include "mbed_assert.h"
+    #include "mbed_error.h"
+#endif
+
 #include "i2c_api.h"
 #include "cmsis.h"
 #include "pinmap.h"
-#include "mbed_error.h"
 
 // nRF51822's I2C_0 and SPI_0 (I2C_1, SPI_1 and SPIS1) share the same address.
 // They can't be used at the same time. So we use two global variable to track the usage.

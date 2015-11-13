@@ -16,7 +16,11 @@
 #ifndef MBED_GPIO_OBJECT_H
 #define MBED_GPIO_OBJECT_H
 
-#include "mbed_assert.h"
+#ifdef YOTTA_CFG_MBED_OS
+    #include "mbed-drivers/mbed_assert.h"
+#else
+    #include "mbed_assert.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
