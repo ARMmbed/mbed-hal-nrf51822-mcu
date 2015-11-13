@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "mbed_assert.h"
+#ifdef YOTTA_CFG_MBED_OS
+    #include "mbed-drivers/mbed_assert.h"
+#else
+    #include "mbed_assert.h"
+#endif
 #include "gpio_api.h"
 #include "pinmap.h"
 

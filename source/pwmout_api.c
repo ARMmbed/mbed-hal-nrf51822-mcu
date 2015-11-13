@@ -13,11 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "mbed_assert.h"
+#ifdef YOTTA_CFG_MBED_OS
+    #include "mbed-drivers/mbed_assert.h"
+    #include "mbed-drivers/mbed_error.h"
+#else
+    #include "mbed_assert.h"
+    #include "mbed_error.h"
+#endif
+
 #include "pwmout_api.h"
 #include "cmsis.h"
 #include "pinmap.h"
-#include "mbed_error.h"
 
 #define NO_PWMS         3
 #define TIMER_PRECISION 4 //4us ticks

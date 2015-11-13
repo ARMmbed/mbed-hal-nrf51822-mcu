@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 //#include <math.h>
-#include "mbed_assert.h"
+#ifdef YOTTA_CFG_MBED_OS
+    #include "mbed-drivers/mbed_assert.h"
+    #include "mbed-drivers/mbed_error.h"
+#else
+    #include "mbed_assert.h"
+    #include "mbed_error.h"
+#endif
+
 #include "spi_api.h"
 #include "cmsis.h"
 #include "pinmap.h"
-#include "mbed_error.h"
 
 #define SPIS_MESSAGE_SIZE 1
 volatile uint8_t m_tx_buf[SPIS_MESSAGE_SIZE] = {0};

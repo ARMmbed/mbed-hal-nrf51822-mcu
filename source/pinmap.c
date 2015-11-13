@@ -13,9 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "mbed_assert.h"
+#ifdef YOTTA_CFG_MBED_OS
+    #include "mbed-drivers/mbed_assert.h"
+    #include "mbed-drivers/mbed_error.h"
+#else
+    #include "mbed_assert.h"
+    #include "mbed_error.h"
+#endif
+
 #include "pinmap.h"
-#include "mbed_error.h"
 
 void pin_function(PinName pin, int function)
 {
