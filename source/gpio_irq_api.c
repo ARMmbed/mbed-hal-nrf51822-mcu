@@ -17,12 +17,7 @@
 #include "cmsis.h"
 
 #include "gpio_irq_api.h"
-
-#ifdef YOTTA_CFG_MBED_OS
-    #include "mbed-drivers/mbed_error.h"
-#else
-    #include "mbed_error.h"
-#endif
+#include "mbed-drivers/mbed_error.h"
 
 #define CHANNEL_NUM    31
 

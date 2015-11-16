@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 //#include <math.h>
-#ifdef YOTTA_CFG_MBED_OS
-    #include "mbed-drivers/mbed_assert.h"
-    #include "mbed-drivers/mbed_error.h"
-#else
-    #include "mbed_assert.h"
-    #include "mbed_error.h"
-#endif
-
+#include "mbed-drivers/mbed_assert.h"
+#include "mbed-drivers/mbed_error.h"
 #include "spi_api.h"
 #include "cmsis.h"
 #include "pinmap.h"
