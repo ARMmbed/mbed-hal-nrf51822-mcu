@@ -18,6 +18,8 @@
 #include "us_ticker_api.h"
 #include "cmsis.h"
 #include "PeripheralNames.h"
+
+#define asm __ASM
 #include "nrf_delay.h"
 
 /*
