@@ -17,12 +17,7 @@
 //#include <math.h>
 #include <string.h>
 
-#ifdef YOTTA_CFG_MBED_OS
-    #include "mbed-drivers/mbed_assert.h"
-#else
-    #include "mbed_assert.h"
-#endif
-
+#include "mbed-drivers/mbed_assert.h"
 #include "serial_api.h"
 #include "cmsis.h"
 #include "pinmap.h"
