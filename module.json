@@ -1,6 +1,6 @@
 {
   "name": "mbed-hal-nrf51822-mcu",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "mbed HAL for Nordic nRF51822 MCUs",
   "keywords": [
     "mbed",
