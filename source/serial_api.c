@@ -76,7 +76,7 @@ void serial_init(serial_t *obj, PinName tx, PinName rx) {
     obj->uart->TXD = 0;
 
     obj->index = 0;
-    
+
     obj->uart->PSELRTS = RTS_PIN_NUMBER;
     obj->uart->PSELTXD = tx; //TX_PIN_NUMBER;
     obj->uart->PSELCTS = CTS_PIN_NUMBER;
@@ -121,6 +121,10 @@ void serial_baud(serial_t *obj, int baudrate)
 
 void serial_format(serial_t *obj, int data_bits, SerialParity parity, int stop_bits)
 {
+    /* Avoid compiler warnings */
+    (void) data_bits;
+    (void) stop_bits;
+
     // 0: 1 stop bits, 1: 2 stop bits
     // int parity_enable, parity_select;
     switch (parity) {
@@ -295,4 +299,6 @@ void serial_set_flow_control(serial_t *obj, FlowControl type, PinName rxflow, Pi
 }
 
 void serial_clear(serial_t *obj) {
+    /* Avoid compiler warnings */
+    (void) obj;
 }

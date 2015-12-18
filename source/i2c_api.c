@@ -53,8 +53,9 @@ void twi_master_init(i2c_t *obj, PinName sda, PinName scl, int frequency)
 
 void i2c_init(i2c_t *obj, PinName sda, PinName scl)
 {
-    NRF_TWI_Type *i2c;
-  
+    // Initialize variable to avoid compiler warnings
+    NRF_TWI_Type *i2c = (NRF_TWI_Type *)I2C_0;
+
     if (i2c0_spi0_peripheral.usage == I2C_SPI_PERIPHERAL_FOR_I2C &&
             i2c0_spi0_peripheral.sda_mosi == (uint8_t)sda &&
             i2c0_spi0_peripheral.scl_miso == (uint8_t)scl) {
@@ -71,14 +72,14 @@ void i2c_init(i2c_t *obj, PinName sda, PinName scl)
         i2c0_spi0_peripheral.usage = I2C_SPI_PERIPHERAL_FOR_I2C;
         i2c0_spi0_peripheral.sda_mosi = (uint8_t)sda;
         i2c0_spi0_peripheral.scl_miso = (uint8_t)scl;
-        
+
         i2c = (NRF_TWI_Type *)I2C_0;
         obj->peripheral = 0x1;
     } else if (i2c1_spi1_peripheral.usage == 0) {
         i2c1_spi1_peripheral.usage = I2C_SPI_PERIPHERAL_FOR_I2C;
         i2c1_spi1_peripheral.sda_mosi = (uint8_t)sda;
         i2c1_spi1_peripheral.scl_miso = (uint8_t)scl;
-        
+
         i2c = (NRF_TWI_Type *)I2C_1;
         obj->peripheral = 0x2;
     } else {

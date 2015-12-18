@@ -19,6 +19,7 @@
 
 PinName port_pin(PortName port, int pin_n)
 {
+    (void) port;
     return (PinName)(pin_n);
 }
 

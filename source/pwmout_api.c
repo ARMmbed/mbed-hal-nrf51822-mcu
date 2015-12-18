@@ -295,6 +295,7 @@ void pwmout_period_ms(pwmout_t *obj, int ms)
 // Set the PWM period, keeping the duty cycle the same.
 void pwmout_period_us(pwmout_t *obj, int us)
 {
+    (void) obj; // Avoid compiler warnings
     uint32_t periodInTicks = us / TIMER_PRECISION;
 
     NRF_TIMER2->EVENTS_COMPARE[3] = 0;
