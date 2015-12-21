@@ -15,7 +15,7 @@
  */
 #include "sleep_api.h"
 #include "cmsis.h"
-#include "mbed_interface.h"
+#include "mbed-drivers/mbed_interface.h"
 #include "nrf_soc.h"
 
 void mbed_enter_sleep(sleep_t *obj)

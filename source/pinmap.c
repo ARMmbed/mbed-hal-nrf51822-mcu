@@ -19,6 +19,9 @@
 
 void pin_function(PinName pin, int function)
 {
+    /* Avoid compiler warnings */
+    (void) pin;
+    (void) function;
 }
 
 void pin_mode(PinName pin, PinMode mode)

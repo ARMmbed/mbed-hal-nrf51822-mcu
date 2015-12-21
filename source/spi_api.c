@@ -32,7 +32,7 @@ extern volatile i2c_spi_peripheral_t i2c1_spi1_peripheral;
 
 void spi_init(spi_t *obj, PinName mosi, PinName miso, PinName sclk)
 {
-    SPIName spi;
+    SPIName spi = SPI_0; // Initialize to avoid compiler warnings
 
     if (i2c0_spi0_peripheral.usage == I2C_SPI_PERIPHERAL_FOR_SPI &&
             i2c0_spi0_peripheral.sda_mosi == (uint8_t)mosi &&
@@ -108,6 +108,7 @@ void spi_init(spi_t *obj, PinName mosi, PinName miso, PinName sclk)
 
 void spi_free(spi_t *obj)
 {
+    (void) obj; // Avoid compiler warnings
 }
 
 static inline void spi_disable(spi_t *obj)
@@ -216,6 +217,7 @@ int spi_slave_receive(spi_t *obj)
 
 int spi_slave_read(spi_t *obj)
 {
+    (void) obj; // Avoid compiler warnings
     return m_rx_buf[0];
 }
 
