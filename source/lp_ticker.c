@@ -42,7 +42,7 @@ void lp_ticker_set_interrupt(uint32_t now, uint32_t time)
 
 uint32_t lp_ticker_get_overflows_counter(void)
 {
-    return overflowCount;
+    return overflowCount >> 8;
 }
 
 uint32_t lp_ticker_get_compare_match(void)
