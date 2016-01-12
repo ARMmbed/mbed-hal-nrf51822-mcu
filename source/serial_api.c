@@ -47,8 +47,6 @@ static uint32_t acceptedSpeeds[17][2] = {{1200, UART_BAUDRATE_BAUDRATE_Baud1200}
                                          {921600, UART_BAUDRATE_BAUDRATE_Baud921600},
                                          {1000000, UART_BAUDRATE_BAUDRATE_Baud1M}};
 
-int stdio_uart_inited = 0;
-serial_t stdio_uart;
 
 
 void serial_init(serial_t *obj, PinName tx, PinName rx) {
@@ -88,11 +86,6 @@ void serial_init(serial_t *obj, PinName tx, PinName rx) {
     }
     if (rx != NC) {
         pin_mode(rx, PullUp);
-    }
-
-    if (uart == STDIO_UART) {
-        stdio_uart_inited = 1;
-        memcpy(&stdio_uart, obj, sizeof(serial_t));
     }
 }
 
