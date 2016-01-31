@@ -72,7 +72,6 @@ extern "C" {
 #endif
 void TIMER2_IRQHandler(void)
 {
-    NRF_TIMER2->EVENTS_COMPARE[3] = 0;
     NRF_TIMER2->CC[3]             =  PERIOD;
 
     if (PWM_taken[0]) {
