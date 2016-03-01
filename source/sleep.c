@@ -19,6 +19,10 @@
 #include "nrf_soc.h"
 #include "nrf_sdm.h"
 
+// Mask of reserved bits of the register ICSR in the System Control Block peripheral
+// In this case, bits which are equal to 0 are the bits reserved in this register
+#define SCB_ICSR_RESERVED_BITS_MASK     0x9E43F03F
+
 void mbed_enter_sleep(sleep_t *obj)
 {
     (void)obj;
@@ -37,8 +41,31 @@ void mbed_enter_sleep(sleep_t *obj)
         // soft device is enabled, use the primitives from the soft device to go to sleep
         sd_app_evt_wait();
     } else {
-        // impossible to use soft device primitive, just wait for events
+        // Note: it is not possible to just use WFE at this stage because WFE
+        // will read the event register (not accessible) and if an event occured,
+        // in the past, it will just clear the event register and continue execution.
+        // SVC call like sd_softdevice_is_enabled set the event register to 1.
+        // This means that a making an SVC call followed by WFE will never put the
+        // CPU to sleep.
+        // Our startegy here is to clear the event register then, if there is any
+        // interrupt, return from here. If no interrupts are pending, just call
+        // WFE.
+
+        // Set an event and wake up whatsoever, this will clear the event
+        // register from all previous events set (SVC call included)
+        __SEV();
         __WFE();
+
+        // Test if there is an interrupt pending (mask reserved regions)
+        if (SCB->ICSR & (SCB_ICSR_RESERVED_BITS_MASK)) {
+            // Ok, there is an interrut pending, no need to go to sleep
+            return;
+        } else {
+            // next event will wakeup the CPU
+            // If an interrupt occured between the test of SCB->ICSR and this
+            // instruction, WFE will just not put the CPU to sleep
+            __WFE();
+        }
     }
 }
 
