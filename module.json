@@ -33,6 +33,9 @@
     "bbcmicro": {
       "mbed-hal-bbcmicro": "~0.0.1"
     },
+    "blenano": {
+      "mbed-hal-blenano": "^1.0.0"
+    },
     "seeedtinyble": {
       "mbed-hal-seeedtinyble": "~0.0.1"
     },

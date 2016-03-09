@@ -82,6 +82,8 @@ endif()
 # requires an extra step for now.
 if(TARGET_LIKE_BBCMICRO)
     set(PLATFORM_SPECIFIC_HAL_LIB mbed-hal-bbcmicro)
+elseif(TARGET_LIKE_BLENANO)
+    set(PLATFORM_SPECIFIC_HAL_LIB mbed-hal-blenano)
 elseif(TARGET_LIKE_SEEEDTINYBLE)
     set(PLATFORM_SPECIFIC_HAL_LIB mbed-hal-seeedtinyble)
 elseif(TARGET_LIKE_MKIT)
