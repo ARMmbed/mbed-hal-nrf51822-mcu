@@ -29,25 +29,6 @@
 
 static uint32_t serial_irq_ids[UART_NUM] = {0};
 static uart_irq_handler irq_handler;
-static uint32_t acceptedSpeeds[17][2] = {{1200, UART_BAUDRATE_BAUDRATE_Baud1200},
-                                         {2400, UART_BAUDRATE_BAUDRATE_Baud2400},
-                                         {4800, UART_BAUDRATE_BAUDRATE_Baud4800},
-                                         {9600, UART_BAUDRATE_BAUDRATE_Baud9600},
-                                         {14400, UART_BAUDRATE_BAUDRATE_Baud14400},
-                                         {19200, UART_BAUDRATE_BAUDRATE_Baud19200},
-                                         {28800, UART_BAUDRATE_BAUDRATE_Baud28800},
-                                         {31250, (0x00800000UL) /* 31250 baud */},
-                                         {38400, UART_BAUDRATE_BAUDRATE_Baud38400},
-                                         {57600, UART_BAUDRATE_BAUDRATE_Baud57600},
-                                         {76800, UART_BAUDRATE_BAUDRATE_Baud76800},
-                                         {115200, UART_BAUDRATE_BAUDRATE_Baud115200},
-                                         {230400, UART_BAUDRATE_BAUDRATE_Baud230400},
-                                         {250000, UART_BAUDRATE_BAUDRATE_Baud250000},
-                                         {460800, UART_BAUDRATE_BAUDRATE_Baud460800},
-                                         {921600, UART_BAUDRATE_BAUDRATE_Baud921600},
-                                         {1000000, UART_BAUDRATE_BAUDRATE_Baud1M}};
-
-
 
 void serial_init(serial_t *obj, PinName tx, PinName rx) {
     UARTName uart = UART_0;
@@ -98,18 +79,28 @@ void serial_free(serial_t *obj)
 // set the baud rate, taking in to account the current SystemFrequency
 void serial_baud(serial_t *obj, int baudrate)
 {
-    if (baudrate<=1200) {
-        obj->uart->BAUDRATE = UART_BAUDRATE_BAUDRATE_Baud1200;
-        return;
-    }
+    // See https://devzone.nordicsemi.com/question/1181/uart-baudrate-register-values/#reply-1194
 
-    for (int i = 1; i<17; i++) {
-        if (baudrate<acceptedSpeeds[i][0]) {
-            obj->uart->BAUDRATE = acceptedSpeeds[i - 1][1];
-            return;
-        }
-    }
-    obj->uart->BAUDRATE = UART_BAUDRATE_BAUDRATE_Baud1M;
+    // The correct value is baudrate * 2^32 / 16e6 = baudrate * 2^22 / 15625,
+    // but that doesn't fit into 32 bits, and Cortex M0 has no hardware
+    // divide, so instead I will do this possibly-over-optimised magic instead!
+    // I have verified that this produces exactly the same values as the header,
+    // except for 921600 (which is wrong in the header).
+
+    uint32_t br = (baudrate << 8) + (baudrate << 4) - (baudrate << 1) - baudrate
+            - (baudrate >> 1) - (baudrate >> 4) - (baudrate >> 9) - (baudrate >> 14)
+            - (baudrate >> 16) - (baudrate >> 17) - (baudrate >> 18) - (baudrate >> 19);
+
+    // Round it to 20 bits (see link above).
+    br = (br + 0x800) & 0xFFFFF000;
+
+    // Limit it to the valid range.
+    if (br < 0x1000)
+        br = 0x1000;
+    if (br > 0x10000000)
+        br = 0x10000000;
+
+    obj->uart->BAUDRATE = br;
 }
 
 void serial_format(serial_t *obj, int data_bits, SerialParity parity, int stop_bits)
