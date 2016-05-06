@@ -25,7 +25,7 @@
     "mbed-hal-nrf51822-mcu"
   ],
   "dependencies": {
-    "mbed-hal": "^1.0.0",
+    "mbed-hal": "*",
     "cmsis-core": "^1.0.0",
     "nrf51-sdk": "^2.0.0"
   },
