@@ -36,7 +36,8 @@ static time_t   time_base;
 
 static inline void rtc_update(void)
 {
-    uint32_t rtc_now = rtc1_getCounter() / RTC_COUNTER_SIZE_SEC;
+    uint32_t rtc_cnt = rtc1_getCounter() & RTC_COUNTER_MASK;
+    uint32_t rtc_now = rtc_cnt / RTC_COUNTER_SIZE_SEC;
     uint32_t dlt_sec = ( ( rtc_now + RTC_COUNTER_SIZE_SEC ) - rtc_prv ) % RTC_COUNTER_SIZE_SEC;
 
     time_base = time_base + (time_t)dlt_sec;
