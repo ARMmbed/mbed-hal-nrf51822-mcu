@@ -19,6 +19,7 @@
 #include "cmsis.h"
 #include "PeripheralNames.h"
 #include "nrf_delay.h"
+#include "rtc_api.h"
 
 /*
  * Note: The micro-second timer API on the nRF51 platform is implemented using
@@ -158,6 +159,7 @@ void RTC1_IRQHandler(void)
         overflowCount++;
         NRF_RTC1->EVENTS_OVRFLW = 0;
         NRF_RTC1->EVTENCLR      = RTC_EVTEN_OVRFLW_Msk;
+        rtc_read();
     }
     if (NRF_RTC1->EVENTS_COMPARE[0] && us_ticker_callbackPending && ((int)(us_ticker_callbackTimestamp - rtc1_getCounter()) <= 0)) {
         NRF_RTC1->EVENTS_COMPARE[0] = 0;
