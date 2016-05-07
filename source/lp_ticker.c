@@ -41,7 +41,7 @@ void lp_ticker_set_interrupt(uint32_t now, uint32_t time)
     //NRF_RTC1->INTENSET = RTC_INTENSET_COMPARE1_Msk;
     
     rtc1_setCaptureCompareValueReg1(time);
-    rtc1_enableCompareEventReg1();
+    rtc1_enableCaptureCompareEventReg1();
 }
 
 uint32_t lp_ticker_get_overflows_counter(void)

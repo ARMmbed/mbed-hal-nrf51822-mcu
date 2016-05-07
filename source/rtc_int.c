@@ -51,7 +51,7 @@ static RTC1EventHandler cc1Handler;
  */
 static RTC1EventHandler cc2Handler;
 
-void rtc1_enableCaptureCompareEventtReg0(void)
+void rtc1_enableCaptureCompareEventReg0(void)
 {
     NRF_RTC1->EVTENCLR = RTC_EVTEN_COMPARE0_Msk;
     NRF_RTC1->INTENSET = RTC_INTENSET_COMPARE0_Msk;     
@@ -164,7 +164,7 @@ void rtc1_setCaptureCompareEventHandlerReg2( RTC1EventHandler handler )
     cc2Handler = handler;    
 }
 
-static inline invokeHandler(const RTC1EventHandler handler)
+static inline void invokeHandler(const RTC1EventHandler handler)
 {
     if( handler != NULL ) { handler(); }
 }
@@ -175,7 +175,7 @@ void rtc1_start(void)
     
     NRF_RTC1->PRESCALER = RTC1_PRESCALER; /* for no pre-scaling. */
 
-    rtc1_enableOverflowInterrupt();
+    rtc1_enableOverflowEvent();
 
     NVIC_SetPriority(RTC1_IRQn, RTC1_IRQ_PRI);
     NVIC_ClearPendingIRQ(RTC1_IRQn);
@@ -195,8 +195,10 @@ void rtc1_stop(void)
     if( !rtc1_init ) return;
     
     NVIC_DisableIRQ(RTC1_IRQn);
-    rtc1_disableCompareInterrupt();
-    rtc1_disableOverflowInterrupt();
+    rtc1_disableCaptureCompareEventReg0();
+    rtc1_disableCaptureCompareEventReg1();
+    rtc1_disableCaptureCompareEventReg2();
+    rtc1_disableOverflowEvent();
 
     NRF_RTC1->TASKS_STOP = 1;
     nrf_delay_us(MAX_RTC_TASKS_DELAY);
@@ -252,11 +254,11 @@ void RTC1_IRQHandler(void)
         invokeHandler(ofHandler);
         //TODO: Execute an overflow callback
     }
-    if (NRF_RTC1->EVENTS_COMPARE[0] && us_ticker_callbackPending && ((int)(us_ticker_callbackTimestamp - rtc1_getCounter()) <= 0)) {
+    if (NRF_RTC1->EVENTS_COMPARE[0]) {
         NRF_RTC1->EVENTS_COMPARE[0] = 0;
         NRF_RTC1->EVTENCLR          = RTC_EVTEN_COMPARE0_Msk;
         invokeHandler(cc0Handler);
-        invokeCallback();
+        //invokeCallback();
         // TODO: Execute an cc reg1 callback
     }
     if (NRF_RTC1->EVENTS_COMPARE[1]) {

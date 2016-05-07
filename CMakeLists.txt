@@ -53,6 +53,7 @@ set_property(SOURCE ${STARTUP_ASM} PROPERTY LANGUAGE ASM)
 add_library(mbed-hal-nrf51822-mcu
     ${STARTUP_ASM}
     ${STARTUP_SRC}
+    "source/rtc_int.c"
     "source/analogin_api.c"
     "source/gpio_irq_api.c"
     "source/pinmap.c"
