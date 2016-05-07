@@ -15,16 +15,17 @@
  */
 
 // The lp ticker is using RTC which is shared with us ticker
-#include "us_ticker_api.h"
+//#include "us_ticker_api.h"
 #include "lp_ticker_api.h"
+#include "rtc_int.h"
 #include "sleep_api.h"
 
-extern uint32_t rtc1_getCounter(void);
-extern volatile uint32_t overflowCount;
+//extern uint32_t rtc1_getCounter(void);
+//extern volatile uint32_t overflowCount;
 
 void lp_ticker_init(void)
 {
-    us_ticker_init();
+    rtc1_start();
 }
 
 uint32_t lp_ticker_read(void)
@@ -35,19 +36,22 @@ uint32_t lp_ticker_read(void)
 void lp_ticker_set_interrupt(uint32_t now, uint32_t time)
 {
     (void)now;
-    NRF_RTC1->CC[1] = time;
-    NRF_RTC1->EVTENCLR = RTC_EVTEN_COMPARE1_Msk;
-    NRF_RTC1->INTENSET = RTC_INTENSET_COMPARE1_Msk;
+    //NRF_RTC1->CC[1] = time;
+    //NRF_RTC1->EVTENCLR = RTC_EVTEN_COMPARE1_Msk;
+    //NRF_RTC1->INTENSET = RTC_INTENSET_COMPARE1_Msk;
+    
+    rtc1_setCaptureCompareValueReg1(time);
+    rtc1_enableCompareEventReg1();
 }
 
 uint32_t lp_ticker_get_overflows_counter(void)
 {
-    return overflowCount >> 8;
+    return rtc1_getOverflowsCounter() >> 8;
 }
 
 uint32_t lp_ticker_get_compare_match(void)
 {
-    return NRF_RTC1->CC[1];
+    return rtc1_getCaptureCompareValueReg1();
 }
 
 void lp_ticker_sleep_until(uint32_t now, uint32_t time)

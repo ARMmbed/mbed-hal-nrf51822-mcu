@@ -16,20 +16,16 @@
 
 // The rtc is using RTC which is shared with us ticker
 #include "rtc_api.h"
-#include "us_ticker_api.h"
+#include "rtc_int.h"
 #include <time.h>
 
 /**
  * We need this value as "ticks_per_second" to update
  * the time of rtc correctly
  */
-#define RTC_CLOCK_FREQ          (uint32_t)(32768)
 #define RTC_COUNTER_SIZE        (uint32_t)(0x1000000)
 #define RTC_COUNTER_MASK        (uint32_t)(0x0FFFFFF)
 #define RTC_COUNTER_SIZE_SEC    (RTC_COUNTER_SIZE / RTC_CLOCK_FREQ)
-
-extern uint32_t rtc1_getCounter(void);
-extern void rtc1_stop(void);
 
 static uint32_t rtc_prv;
 static time_t   time_base;
@@ -44,10 +40,15 @@ static inline void rtc_update(void)
     rtc_prv = rtc_now;
 }
 
+void rtc1_overflowEventHandler(void)
+{
+    rtc_update();
+}
 
 void rtc_init(void)
 {
-    us_ticker_init();
+    rtc1_setOverflowEventHandler( &rtc1_overflowEventHandler );
+    rtc1_start();
 }
 
 /**

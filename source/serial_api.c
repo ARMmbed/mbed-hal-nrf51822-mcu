@@ -104,7 +104,7 @@ void serial_baud(serial_t *obj, int baudrate)
     }
 
     for (int i = 1; i<17; i++) {
-        if (baudrate<acceptedSpeeds[i][0]) {
+        if ((uint32_t)baudrate<acceptedSpeeds[i][0]) {
             obj->uart->BAUDRATE = acceptedSpeeds[i - 1][1];
             return;
         }
