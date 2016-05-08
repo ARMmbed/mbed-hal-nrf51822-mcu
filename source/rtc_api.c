@@ -18,6 +18,7 @@
 #include "rtc_api.h"
 #include "rtc_int.h"
 #include <time.h>
+#include <stdbool.h>
 
 /**
  * We need this value as "ticks_per_second" to update
@@ -29,6 +30,7 @@
 
 static uint32_t rtc_prv;
 static time_t   time_base;
+static bool     rtc_inited;
 
 static inline void rtc_update(void)
 {
@@ -47,8 +49,19 @@ void rtc1_overflowEventHandler(void)
 
 void rtc_init(void)
 {
+    if( rtc_inited )
+    {
+        return;
+    }
+    
     rtc1_setOverflowEventHandler( &rtc1_overflowEventHandler );
     rtc1_start();
+    rtc_inited = true;
+}
+
+int rtc_isenabled(void)
+{
+    return rtc_inited;
 }
 
 /**
@@ -57,6 +70,7 @@ void rtc_init(void)
 void rtc_free(void)
 {
     rtc1_stop();
+    rtc_inited = false;
 }
 
 time_t rtc_read(void)
@@ -72,6 +86,6 @@ void rtc_write(time_t t)
 {
     // set the current time from a parameter
     time_base   = t;
-    rtc_prv     = rtc1_getCounter() / ticks_per_second;
+    rtc_prv     = rtc1_getCounter() / RTC_COUNTER_SIZE_SEC;
 }
 

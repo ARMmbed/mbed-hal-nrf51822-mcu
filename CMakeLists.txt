@@ -65,6 +65,7 @@ add_library(mbed-hal-nrf51822-mcu
     "source/port_api.c"
     "source/serial_api.c"
     "source/spi_api.c"
+    "source/rtc_api.c"
     "source/lp_ticker.c"
 )
 set_target_properties(mbed-hal-nrf51822-mcu PROPERTIES
