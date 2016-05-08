@@ -53,6 +53,7 @@ set_property(SOURCE ${STARTUP_ASM} PROPERTY LANGUAGE ASM)
 add_library(mbed-hal-nrf51822-mcu
     ${STARTUP_ASM}
     ${STARTUP_SRC}
+    "source/rtc_int.c"
     "source/analogin_api.c"
     "source/gpio_irq_api.c"
     "source/pinmap.c"
@@ -64,6 +65,7 @@ add_library(mbed-hal-nrf51822-mcu
     "source/port_api.c"
     "source/serial_api.c"
     "source/spi_api.c"
+    "source/rtc_api.c"
     "source/lp_ticker.c"
 )
 set_target_properties(mbed-hal-nrf51822-mcu PROPERTIES
@@ -82,6 +84,8 @@ endif()
 # requires an extra step for now.
 if(TARGET_LIKE_BBCMICRO)
     set(PLATFORM_SPECIFIC_HAL_LIB mbed-hal-bbcmicro)
+elseif(TARGET_LIKE_BLENANO)
+    set(PLATFORM_SPECIFIC_HAL_LIB mbed-hal-blenano)
 elseif(TARGET_LIKE_SEEEDTINYBLE)
     set(PLATFORM_SPECIFIC_HAL_LIB mbed-hal-seeedtinyble)
 elseif(TARGET_LIKE_MKIT)
