@@ -40,7 +40,6 @@ static uint32_t          us_ticker_callbackTimestamp;
 static inline void invokeCallback(void)
 {
     us_ticker_callbackPending = false;
-    //rtc1_disableCompareInterrupt();
     rtc1_disableCaptureCompareEventReg0();
     us_ticker_irq_handler();
 }
@@ -137,8 +136,6 @@ void us_ticker_set_interrupt(timestamp_t timestamp)
         newCallbackTime = rtc1_getCounter() + FUZZY_RTC_TICKS;
     }
 
-    
-    //NRF_RTC1->CC[0]             = newCallbackTime & MAX_RTC_COUNTER_VAL;
     rtc1_setCaptureCompareValueReg0( newCallbackTime & MAX_RTC_COUNTER_VAL );
     
     us_ticker_callbackTimestamp = newCallbackTime;
@@ -158,7 +155,5 @@ void us_ticker_disable_interrupt(void)
 
 void us_ticker_clear_interrupt(void)
 {
-    //NRF_RTC1->EVENTS_OVRFLW     = 0;
-    //NRF_RTC1->EVENTS_COMPARE[0] = 0;
     rtc1_clearCaptureCompareEventReg0();
 }

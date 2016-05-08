@@ -164,9 +164,67 @@ void rtc1_setCaptureCompareEventHandlerReg2( RTC1EventHandler handler )
     cc2Handler = handler;    
 }
 
+
 static inline void invokeHandler(const RTC1EventHandler handler)
 {
     if( handler != NULL ) { handler(); }
+}
+
+static inline void onOverflowEvent(void)
+{
+    overflowCount++;
+    NRF_RTC1->EVENTS_OVRFLW = 0;
+    NRF_RTC1->EVTENCLR      = RTC_EVTEN_OVRFLW_Msk;
+    invokeHandler(ofHandler);
+}
+
+static inline void checkAndExecuteOverflowEvent(void)
+{
+    if (NRF_RTC1->EVENTS_OVRFLW) {
+        onOverflowEvent();
+    }
+}
+
+static inline void onCaptureCompareEventReg0(void)
+{
+    NRF_RTC1->EVENTS_COMPARE[0] = 0;
+    NRF_RTC1->EVTENCLR          = RTC_EVTEN_COMPARE0_Msk;
+    invokeHandler(cc0Handler);
+}
+
+static inline void checkAndExecuteCaptureCompareEventReg0(void)
+{
+    if (NRF_RTC1->EVENTS_COMPARE[0]) {
+        onCaptureCompareEventReg0();
+    }
+}
+
+static inline void onCaptureCompareEventReg1(void)
+{
+    NRF_RTC1->EVENTS_COMPARE[1] = 0;
+    NRF_RTC1->EVTENCLR          = RTC_EVTEN_COMPARE1_Msk;
+    invokeHandler(cc1Handler);
+}
+
+static inline void checkAndExecuteCaptureCompareEventReg1(void)
+{
+    if (NRF_RTC1->EVENTS_COMPARE[1]) {
+        onCaptureCompareEventReg1();
+    }
+}
+
+static inline void onCaptureCompareEventReg2(void)
+{
+    NRF_RTC1->EVENTS_COMPARE[2] = 0;
+    NRF_RTC1->EVTENCLR          = RTC_EVTEN_COMPARE2_Msk;
+    invokeHandler(cc2Handler);
+}
+
+static inline void checkAndExecuteCaptureCompareEventReg2(void)
+{
+    if (NRF_RTC1->EVENTS_COMPARE[2]) {
+        onCaptureCompareEventReg2();
+    }
 }
 
 void rtc1_start(void)
@@ -183,6 +241,7 @@ void rtc1_start(void)
 
     NRF_RTC1->TASKS_START = 1;
     nrf_delay_us(MAX_RTC_TASKS_DELAY);
+    
     
     rtc1_init = true;
 }
@@ -217,11 +276,7 @@ void rtc1_stop(void)
  */
 uint64_t rtc1_getCounter64(void)
 {
-    if (NRF_RTC1->EVENTS_OVRFLW) {
-        overflowCount++;
-        NRF_RTC1->EVENTS_OVRFLW = 0;
-        NRF_RTC1->EVTENCLR      = RTC_EVTEN_OVRFLW_Msk;
-    }
+    checkAndExecuteOverflowEvent();
     return ((uint64_t)overflowCount << 24) | NRF_RTC1->COUNTER;
 }
 
@@ -247,30 +302,8 @@ uint32_t rtc1_getOverflowsCounter(void)
  */
 void RTC1_IRQHandler(void)
 {
-    if (NRF_RTC1->EVENTS_OVRFLW) {
-        overflowCount++;
-        NRF_RTC1->EVENTS_OVRFLW = 0;
-        NRF_RTC1->EVTENCLR      = RTC_EVTEN_OVRFLW_Msk;
-        invokeHandler(ofHandler);
-        //TODO: Execute an overflow callback
-    }
-    if (NRF_RTC1->EVENTS_COMPARE[0]) {
-        NRF_RTC1->EVENTS_COMPARE[0] = 0;
-        NRF_RTC1->EVTENCLR          = RTC_EVTEN_COMPARE0_Msk;
-        invokeHandler(cc0Handler);
-        //invokeCallback();
-        // TODO: Execute an cc reg1 callback
-    }
-    if (NRF_RTC1->EVENTS_COMPARE[1]) {
-        // Compare[1] used by lp ticker
-        NRF_RTC1->EVENTS_COMPARE[1] = 0;
-        NRF_RTC1->EVTENCLR = RTC_EVTEN_COMPARE1_Msk;
-        invokeHandler(cc1Handler);
-    }
-    if (NRF_RTC1->EVENTS_COMPARE[2]) {
-        // Compare[2] used by anyone ...
-        NRF_RTC1->EVENTS_COMPARE[2] = 0;
-        NRF_RTC1->EVTENCLR = RTC_EVTEN_COMPARE2_Msk;
-        invokeHandler(cc2Handler);
-    }
+    checkAndExecuteOverflowEvent();
+    checkAndExecuteCaptureCompareEventReg0();
+    checkAndExecuteCaptureCompareEventReg1();
+    checkAndExecuteCaptureCompareEventReg2();
 }

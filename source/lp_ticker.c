@@ -20,9 +20,6 @@
 #include "rtc_int.h"
 #include "sleep_api.h"
 
-//extern uint32_t rtc1_getCounter(void);
-//extern volatile uint32_t overflowCount;
-
 void lp_ticker_init(void)
 {
     rtc1_start();
@@ -35,11 +32,7 @@ uint32_t lp_ticker_read(void)
 
 void lp_ticker_set_interrupt(uint32_t now, uint32_t time)
 {
-    (void)now;
-    //NRF_RTC1->CC[1] = time;
-    //NRF_RTC1->EVTENCLR = RTC_EVTEN_COMPARE1_Msk;
-    //NRF_RTC1->INTENSET = RTC_INTENSET_COMPARE1_Msk;
-    
+    (void)now;    
     rtc1_setCaptureCompareValueReg1(time);
     rtc1_enableCaptureCompareEventReg1();
 }
