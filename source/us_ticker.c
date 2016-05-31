@@ -234,10 +234,23 @@ void us_ticker_set_interrupt(timestamp_t timestamp)
      * microsecond units (in 64-bits).
      */
     const uint64_t currentTime64 = RTC_UNITS_TO_MICROSECONDS(rtc1_getCounter64());
+    
     uint64_t timestamp64 = (currentTime64 & ~(uint64_t)0xFFFFFFFFULL) + timestamp;
-    if (((uint32_t)currentTime64 > 0x80000000) && (timestamp < 0x80000000)) {
-        timestamp64 += (uint64_t)0x100000000ULL;
+    
+    if ((int32_t)(timestamp - (uint32_t)currentTime64) < 0) {
+        // It's in the past, call it immediately. Note that this behaviour is not specified
+        // (because there are no specifications), and different platforms behave differently
+        // but this is the most sensible behaviour.
+        us_ticker_irq_handler();
+        return;
     }
+    
+    // If timestamp64 is less than the current time (we could equally compare only the lower 32 bits of
+    // each), then this interrupt needs to be called on the next loop of the 1 MHz counter.
+    if (timestamp64 < currentTime64) {
+       timestamp64 += (uint64_t)0x100000000ULL;
+    }
+	
     uint32_t newCallbackTime = MICROSECONDS_TO_RTC_UNITS(timestamp64);
 
     /* Check for repeat setup of an existing callback. This is actually not
@@ -250,7 +263,7 @@ void us_ticker_set_interrupt(timestamp_t timestamp)
      * Even if they are immediately pending, they are scheduled to trigger a few
      * ticks later. This keeps things simple by invoking the callback from an
      * independent interrupt context. */
-    if ((int)(newCallbackTime - rtc1_getCounter()) <= (int)FUZZY_RTC_TICKS) {
+    if ((int32_t)(newCallbackTime - rtc1_getCounter()) <= FUZZY_RTC_TICKS) {
         newCallbackTime = rtc1_getCounter() + FUZZY_RTC_TICKS;
     }
 
