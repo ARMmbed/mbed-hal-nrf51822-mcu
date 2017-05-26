@@ -59,10 +59,10 @@ static NRF_TIMER_Type *Timers[1] = {
     NRF_TIMER2
 };
 
-uint16_t PERIOD            = 20000 / TIMER_PRECISION;  //20ms
+uint32_t PERIOD            = 20000 / TIMER_PRECISION;  //20ms
 uint8_t PWM_taken[NO_PWMS] = {0, 0, 0};
-uint16_t PULSE_WIDTH[NO_PWMS] = {1, 1, 1}; //set to 1 instead of 0
-uint16_t ACTUAL_PULSE[NO_PWMS] = {0, 0, 0};
+uint32_t PULSE_WIDTH[NO_PWMS] = {1, 1, 1}; //set to 1 instead of 0
+uint32_t ACTUAL_PULSE[NO_PWMS] = {0, 0, 0};
 
 
 /** @brief Function for handling timer 2 peripheral interrupts.
@@ -72,7 +72,6 @@ extern "C" {
 #endif
 void TIMER2_IRQHandler(void)
 {
-    NRF_TIMER2->EVENTS_COMPARE[3] = 0;
     NRF_TIMER2->CC[3]             =  PERIOD;
 
     if (PWM_taken[0]) {
@@ -248,7 +247,7 @@ void pwmout_free(pwmout_t *obj)
 
 void pwmout_write(pwmout_t *obj, float value)
 {
-    uint16_t oldPulseWidth;
+    uint32_t oldPulseWidth;
 
     NRF_TIMER2->EVENTS_COMPARE[3] = 0;
     NRF_TIMER2->TASKS_STOP        = 1;
@@ -301,8 +300,8 @@ void pwmout_period_us(pwmout_t *obj, int us)
     NRF_TIMER2->EVENTS_COMPARE[3] = 0;
     NRF_TIMER2->TASKS_STOP        = 1;
 
-    if (periodInTicks>((1 << 16) - 1)) {
-        PERIOD = (1 << 16) - 1; //131ms
+    if (periodInTicks>UINT32_MAX) {
+        PERIOD = UINT32_MAX;
     } else if (periodInTicks<5) {
         PERIOD = 5;
     } else {
@@ -326,7 +325,7 @@ void pwmout_pulsewidth_ms(pwmout_t *obj, int ms)
 void pwmout_pulsewidth_us(pwmout_t *obj, int us)
 {
     uint32_t pulseInTicks  = us / TIMER_PRECISION;
-    uint16_t oldPulseWidth = ACTUAL_PULSE[obj->pwm];
+    uint32_t oldPulseWidth = ACTUAL_PULSE[obj->pwm];
 
     NRF_TIMER2->EVENTS_COMPARE[3] = 0;
     NRF_TIMER2->TASKS_STOP        = 1;
